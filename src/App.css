@@ -103,6 +103,18 @@
   }
 }
 
+@media only screen and (min-width: 375px) {
+  .content__cards {
+    grid-gap: 10px;
+    padding: 20px 10px;
+  }
+
+  .content__cards--img {
+    height: 60px;
+    width: 80px;
+  }
+}
+
 @media only screen and (min-width: 768px) {
   .content__cards--img {
     height: 120px;
