@@ -62,8 +62,10 @@ export default function MemoryGame() {
 
   return (
     <section className="content">
-      <h2 className="content__title">Memory Game</h2>
-      <h3 className="content__count">Points: {points}</h3>
+      <h1 className="content__title">Memory Game</h1>
+      <h3 className="content__count">Find all animals!</h3>
+      <h4 className="content__count">Points: {points}</h4>
+
       <button className="content__button" onClick={startOver}>
         Start over
       </button>
