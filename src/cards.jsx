@@ -7,6 +7,14 @@ export default function MemoryGame() {
   const [chosenIds, setChosenIds] = useState([]);
   const [points, setPoints] = useState(0);
 
+  const [paused, setPaused] = useState(false);
+  const [over, setOver] = useState(false);
+
+  const hours = 0;
+  const minutes = 1;
+  const seconds = 0;
+  const [[h, m, s], setTime] = useState([hours, minutes, seconds]);
+
   const [openCards, setOpenCards] = useState([]);
 
   const createCardBoard = () => {
@@ -32,7 +40,7 @@ export default function MemoryGame() {
         setTimeout(() => {
           setChosenIds([]);
           setChosen([]);
-        }, 700);
+        }, 1000);
       }
     }
   };
@@ -49,7 +57,33 @@ export default function MemoryGame() {
     return array;
   };
 
+  const tick = () => {
+    if (paused || over) return;
+
+    if (h === 0 && m === 0 && s === 0) {
+      setOver(true);
+    } else if (m === 0 && s === 0) {
+      setTime([h - 1, 59, 59]);
+    } else if (s == 0) {
+      setTime([h, m - 1, 59]);
+    } else {
+      setTime([h, m, s - 1]);
+    }
+  };
+
+  const el = () => {
+    if (over === true) {
+      return "Game over!";
+    }
+    if (points === 20) {
+      return "You win!";
+    }
+  };
+
   const startOver = () => {
+    setTime([parseInt(hours), parseInt(minutes), parseInt(seconds)]);
+    setPaused(false);
+    setOver(false);
     setChosenIds([]);
     setChosen([]);
     setPoints(0);
@@ -57,30 +91,51 @@ export default function MemoryGame() {
   };
 
   useEffect(() => {
+    const timerID = setInterval(() => tick(), 1000);
+    return () => clearInterval(timerID);
+  });
+
+  useEffect(() => {
     createCardBoard();
   }, []);
 
+  // console.log(openCards) - победа тут
+
   return (
     <section className="content">
-      <h1 className="content__title">Memory Game</h1>
-      <h3 className="content__count">Find all animals!</h3>
-      <h4 className="content__count">Points: {points}</h4>
+      <div className="header">
+        <h1 className="content__title">Memory Game</h1>
+        {/* <h3 className="content__count">Find all animals!</h3> */}
+        {/* <h4 className="content__count">Points: {points}</h4>
+        <div>Countdown: {counter}</div> */}
+        <p>
+          {(over === true || points === 20)
+            ? el()
+            : `${m.toString().padStart(2, "0")}:${s
+                .toString()
+                .padStart(2, "0")}`}
+        </p>
+        {/* <button onClick={() => reset()}>Restart</button> */}
 
-      <button className="content__button" onClick={startOver}>
-        Start over
-      </button>
+        <button className="content__button" onClick={startOver}>
+          Start over
+        </button>
+      </div>
+
       <div className="content__cards row no-gutters">
         {imagesArray?.map((image, index) => {
           return (
             <div
               className="col-4 col-lg-2"
               key={index}
-              onClick={() => flipImage(image, index)}
+              onClick={() =>
+                m === 0 && s === 0 ? "" : flipImage(image, index)
+              }
             >
               <img
                 src={isCardChosen(image, index) ? image : main}
                 alt=""
-                className='content__cards--img'
+                className="content__cards--img"
               />
             </div>
           );
